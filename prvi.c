@@ -71,8 +71,24 @@ void ispisStud(Student* stud, int brStud){
 int main(){
 
     char imeDatoteke[MAXNAME]={0};
-    printf("\nMolimo upisite ime datoteke sa listom studenata:\n");
-    scanf("%s", imeDatoteke);
+    //printf("\nMolimo upisite ime datoteke sa listom studenata:\n");
+    //scanf("%s", imeDatoteke);
+
+    FILE *test=NULL;
+
+    while(test==NULL){
+        printf("\nMolimo upisite ime datoteke sa listom studenata:\n");
+        scanf("%s", imeDatoteke);
+
+        test=fopen(imeDatoteke, "r");
+
+        if(test==NULL){
+            printf("\nGreska u otvaranju datoteke!");
+        }
+        else{
+            printf("\nUspjesno otvaranje datoteke!");
+        }
+    }
 
     int brojStudenata=0;
     brojStudenata=brojacRedova(imeDatoteke);
