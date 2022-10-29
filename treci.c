@@ -17,7 +17,7 @@ E. čita listu iz datoteke.
 #define SUCCESS (0)
 #define NOT_FOUND (0)
 #define EXIT_FAIL (-1)
-#define BUFFER_MAX (100)
+#define BUFFER_MAX (400)
 
 typedef struct Osoba * Pozicija;
 
@@ -317,11 +317,70 @@ int UpisUDatoteku(Pozicija p)
 
 }
 
+int DodajNaKrajDat(Pozicija p, char *dat,int i)
+{
+    char buffer[BUFFER_MAX]={0};
+    int j=0;
+    int brojac=0;
+    int bufferint=0;
+    FILE* f=NULL;
+    f=fopen(dat,"r");
+
+    if(f==NULL)
+        {
+            printf("\nNeuspjesno otvaranje datoteke!");
+            return FILE_FAIL;
+        }
+        else
+        {
+            printf("\nUspjesno otvaranje datoteke!");
+        }
+
+    while(p->next != NULL){
+        p=p->next;
+    }
+
+    Pozicija q=NULL;
+
+    q=(Pozicija)malloc(sizeof(Osoba));
+    if(q==NULL){
+        printf("\nNeuspjesno dodavanje novog elementa liste!");
+        return ALLOC_FAIL;
+    }
+    else{
+        printf("\nDodan novi element liste!");
+    }
+    
+    fscanf(f,"%s\t%s\t%d",buffer,buffer,bufferint);
+
+    for(j=0;j<i;j++)
+    {
+        fscanf(f,"%s\t%s\t%d",buffer,buffer,bufferint);
+    }
+    fscanf(f,"%s\t%s\t%d",q->ime,q->prezime,q->godina_rodenja);
+
+    while(!feof(f))
+    {
+        fgets(buffer,BUFFER_MAX,f);
+    }
+
+    printf("\nUspjesno uneseno u listu!");
+
+    q->next=p->next;
+    p->next=q;
+
+    fclose(f);
+
+    return SUCCESS;
+}
+
 int IspisIzDatoteke(Pozicija p)
 {
+    int status=0;
     int brojac=0,i=0;
     char imeDatoteke[NAME_MAX]={0};
     char buffer[BUFFER_MAX]={0};
+    int bufferint=0;
 
     printf("\nUnesite ime datoteke: ");
     scanf(" %s",imeDatoteke);
@@ -351,7 +410,9 @@ int IspisIzDatoteke(Pozicija p)
 
     for(i=0;i<brojac;i++)
     {
-        
+        status=DodajNaKrajDat(p,imeDatoteke,i);
+        if(status!=0)
+        return EXIT_FAIL;
     }
 
     
@@ -361,6 +422,8 @@ int IspisIzDatoteke(Pozicija p)
 
     return SUCCESS;
 }
+
+
 
 int main()
 {
