@@ -30,6 +30,7 @@ Pozicija ZbrojiPolinome(Pozicija, Pozicija);
 int DodajNaKraj(Pozicija, int, int);
 Pozicija PomnoziPolinome(Pozicija, Pozicija);
 int IspisMenija();
+int BrisiSve(Pozicija);
 
 int main() {
 
@@ -61,6 +62,10 @@ int main() {
 		switch (odabir) {
 		case 0:
 			printf("\nHvala na koristenju, ugodan dan! :)");
+			BrisiSve(head1);
+			BrisiSve(head2);
+			BrisiSve(zbroj);
+			BrisiSve(umnozak);
 			return SUCCESS;
 			break;
 		case 1:
@@ -328,6 +333,18 @@ int IspisMenija() {
 	printf("\n4) Zbrajanje dvaju polinoma");
 	printf("\n5) Mnozenje dvaju polinoma");
 	printf("\n0) Zatvaranje programa");
+
+	return SUCCESS;
+}
+
+int BrisiSve(Pozicija p) {
+	Pozicija temp = NULL;
+	
+	while (p != NULL) {
+		temp = p;
+		p = p->next;
+		free(temp);
+	}
 
 	return SUCCESS;
 }
