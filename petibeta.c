@@ -1,9 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define SUCCESS (-1)
+#define SUCCESS (0)
 #define NAME_MAX (100)
 #define PROGRAM_EXIT (-1)
 #define ALOCC_POZ_FAIL (NULL)
+#define ALOCC_FAIL (-1)
 #define FILE_FAIL (-1)
 #define BUFFER_MAX (200)
 
@@ -12,14 +15,17 @@ typedef struct racun* Pozicija;
 struct racun {
 	float br;
 	Pozicija next;
-	Pozicija kraj;
 };
 
 typedef struct racun racun;
 
 int citanjeDatoteke(char[NAME_MAX],Pozicija);
 Pozicija createHead();
-Pozicija dodajNaStog(int,Pozicija);
+int dodajNaStog(int,Pozicija);
+int uzmiSaStoga(char,Pozicija);
+int brisiElement(Pozicija);
+int ispisRezultata(Pozicija);
+int brisiSve(Pozicija);
 
 int main() 
 {
@@ -43,14 +49,28 @@ int main()
 		return PROGRAM_EXIT;
 	}
 
+   	status=ispisRezultata(head);
+   	if (status != 0)
+	{
+		return PROGRAM_EXIT;
+	}
+
+    	status=brisiSve(head);
+    	if (status != 0)
+	{
+		return PROGRAM_EXIT;
+	}
+
 	return SUCCESS;
 }
 
 int citanjeDatoteke(char imeDat[NAME_MAX],Pozicija p)
 {
-	Pozicija status = NULL;
-	int tmp=0;
+    	int status=0,n=0;
+	int tmp=0, br=0;
 	char buffer[BUFFER_MAX] = { 0 };
+    	char *buf;
+    	char operacija='\0';
 	FILE* fp = NULL;
 	fp = fopen(imeDat, "r");
 
@@ -60,25 +80,35 @@ int citanjeDatoteke(char imeDat[NAME_MAX],Pozicija p)
 		return FILE_FAIL;
 	}
 	
-	fgets(fp,"%s",buffer);
+	fgets(buffer,BUFFER_MAX,fp);
+    	buf=buffer;
 
-	while(strlen(buffer)!=0)
+    	printf("\nPostfix izraz iscitan iz datoteke:\n%s",buffer);
+
+	while(strlen(buf)!=0)
 	{
-		if (sscanf(buffer, "%d", tmp)==1)
+		if (sscanf(buf, "%d", &br)==1)
 		{
-			status=dodajNaStog(tmp,p);
-			if (status == NULL)
+            	sscanf(buf, "%d %n",&tmp,&n);
+			status=dodajNaStog(br,p);
+			if (status != 0)
 			{
 				return FILE_FAIL;
 			}
 		}
 		else
 		{
-
+            		sscanf(buf,"%c %n",&operacija,&n);
+            		status=uzmiSaStoga(operacija,p);
+            		if (status != 0)
+			{
+				return FILE_FAIL;
+			}
 		}
+        buf+=n;
 	}
-	
 
+	return SUCCESS;
 }
 
 Pozicija createHead()
@@ -97,14 +127,14 @@ Pozicija createHead()
 	return head;
 }
 
-Pozicija dodajNaStog(int br, Pozicija p)
+int dodajNaStog(int br, Pozicija p)
 {
 	Pozicija q = NULL;
 	q = (Pozicija)malloc(sizeof(racun));
 	if (q == NULL)
 	{
 		printf("\nGreska pri alokaciji!");
-		return ALOCC_POZ_FAIL;
+		return ALOCC_FAIL;
 	}
 
 	q->next = p->next;
@@ -112,4 +142,79 @@ Pozicija dodajNaStog(int br, Pozicija p)
 
 	q->br = (float) br;
 
+    	return SUCCESS;
+}
+
+int uzmiSaStoga(char operacija, Pozicija p)
+{
+    	float rezultat=0;
+    	Pozicija head=NULL;
+    	head=p;
+
+    	Pozicija pret=NULL;
+    	p=p->next;
+    	pret=p->next;
+
+    	switch(operacija)
+    	{
+       	case '+':
+        {
+            	rezultat=(pret->br) + (p->br);
+            	break;
+        }
+        case '*':
+        {
+            	rezultat=(pret->br) * (p->br);
+            	break;
+        }
+        case '/':
+        {
+            	rezultat=(pret->br) / (p->br);
+            	break;
+        }
+        case '-':
+        {
+            	rezultat=(pret->br) - (p->br);
+            	break;
+        }
+   	}
+
+    	pret->br=rezultat;
+
+    	brisiElement(head);
+
+    	return SUCCESS;
+}
+
+int brisiElement(Pozicija p)
+{
+    	Pozicija tmp=NULL;
+    	tmp=p->next;
+
+    	p->next=tmp->next;
+    
+    	free(tmp);
+
+    	return SUCCESS;
+}
+
+int ispisRezultata(Pozicija p)
+{
+    	printf("\nRezultat je %.2f", p->next->br);
+
+    	return SUCCESS;
+}
+
+int brisiSve(Pozicija p)
+{
+    	Pozicija temp = NULL;
+	
+	while (p != NULL) 
+	{
+		temp = p;
+		p = p->next;
+		free(temp);
+	}
+
+	return SUCCESS;
 }
