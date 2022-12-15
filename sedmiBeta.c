@@ -14,6 +14,7 @@ koristenje DOS naredbi: 1- "md", 2 - "cd dir", 3 - "cd..", 4 - "dir" i 5 – izl
 #define EXIT 0
 #define SUCCESS 0
 #define ALLOC_FAIL 0
+#define ALREADY_EXIST 0
 
 struct dir;
 typedef struct dir* Pozicija;
@@ -131,7 +132,12 @@ int stvoriDatoteku(Pozicija current) {
 		printf("\nKrenirana nova datoteka %s!",imeDat);
 	}
 	else {
+		if (strcmp(p->child->naziv, imeDat) == 0) {
+			printf("\nVec postoji datoteka s tim nazivom!");
+			return ALREADY_EXIST;
+		}
 		if (strcmp(p->child->naziv, imeDat)>0) {
+
 			q = (Pozicija)malloc(sizeof(dir));
 
 			if (q == NULL) {
@@ -152,6 +158,12 @@ int stvoriDatoteku(Pozicija current) {
 		while (p->sibling != NULL && strcmp(p->sibling->naziv, imeDat) < 0) {
 			p = p->sibling;
 		}
+
+		if(p->sibling!=NULL)
+			if (strcmp(p->sibling->naziv, imeDat) == 0) {
+				printf("\nVec postoji datoteka s tim nazivom!");
+				return ALREADY_EXIST;
+			}
 
 		q = (Pozicija)malloc(sizeof(dir));
 
