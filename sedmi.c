@@ -113,7 +113,7 @@ int stvoriDatoteku(Pozicija current) {
 	Pozicija q = NULL;
 	char imeDat[FILENAME] = { 0 };
 	printf("\nUnesi naziv nove datoteke: ");
-	scanf("%s", imeDat);
+	scanf(" %[^\n]", imeDat);
 
 	if (p->child == NULL) {
 
@@ -197,7 +197,7 @@ void ispisMenija() {
 Pozicija ulazUDatoteku(Pozicija current, Poz stogHead) {
 	char imeDat[FILENAME] = { 0 };
 	printf("\nUnesi ime odabrane datoteke: ");
-	scanf("%s", imeDat);
+	scanf(" %[^\n]", imeDat);
 	Pozicija p = current->child;
 	int status = 0;
 
