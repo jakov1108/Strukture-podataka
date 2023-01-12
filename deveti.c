@@ -38,17 +38,17 @@ typedef struct _stablo {
     poz Right;
 }stablo;
 
-int Meni(poz S, pozicija P, pozicija P1, int Niz[], int X);     //briamo hocemo li ispis sa "zadanim" brojevima ili rand brojevima
-poz Insert1(poz S, int X);                                      //Dodajemo element u stablo sa random vrijednostima
-int GiveRandNumbers(int X, pozicija P, poz S);                  //Funkcija koja nam daje X random brojeva između 10 in 90
-pozicija CreateListElement(int X);                              //Kreira element vezane liste
-int InsertIntoList(pozicija P, pozicija S);                     //Dodaje element sortirano u vezanu listu
-int PrintList(pozicija P);                                      //Ispis vezane liste
-poz AddElementIntoTree(int X, poz S);                           //Dodaje element u stablo
-int PrintInorder(poz S);                                        //Inoreder ispis
-int Addition(poz S);                                            //Funkcija koja obavja zbrajanje
-int Replace(poz S, pozicija P);                                 //Replace
-int PutIntoFile(pozicija P, pozicija P1);                       //Stavlja u file rezultate prije (zad a) i nakon (zad b)
+int Meni(poz S, pozicija P, pozicija P1, int Niz[], int X);     
+poz Insert1(poz S, int X);                                    
+int GiveRandNumbers(int X, pozicija P, poz S);                  
+pozicija CreateListElement(int X);                              
+int InsertIntoList(pozicija P, pozicija S);                     
+int PrintList(pozicija P);                                      
+poz AddElementIntoTree(int X, poz S);                           
+int PrintInorder(poz S);                                        
+int Addition(poz S);                                            
+int Replace(poz S, pozicija P);                                 
+int PutIntoFile(pozicija P, pozicija P1);                      
 
 int main()
 {
