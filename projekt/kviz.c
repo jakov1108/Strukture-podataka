@@ -225,7 +225,7 @@ position loadQuestionsFromFile(position root) {
 
     char question[MAX_LEN];
     char answer[MAX_LEN];
-    while (fscanf(file, "%s %s", question, answer) != EOF) {
+    while (fscanf(file, " %[^\n] %[^\n]", question, answer) != EOF) {
         position newNode = NULL;
         newNode= createNode(newNode);
         if (newNode == NULL) {
