@@ -7,7 +7,10 @@
 #define PROGRAM_EXIT (-1)
 #define ALLOC_FAIL_POZ (NULL)
 #define MAX_LEN (150)
-#define TEXT 100
+#define TEXT (100)
+#define EMPTY (0)
+#define ERROR (-1)
+#define FILE_FAIL (-1)
 
 typedef struct node* position;
 
@@ -22,22 +25,23 @@ typedef struct node node;
 
 position createNode(position);
 position insertNode(position, position);
-void takeTest(position, int);
+int takeTest(position, int);
 int checkAnswer(position, char*);
-void saveQuestionsToFile(position);
-void saveQuestionsHelper(position, FILE*);
+int saveQuestionsToFile(position);
+int saveQuestionsHelper(position, FILE*);
 position loadQuestionsFromFile(position);
 void printMenu();
-void takeTestAll(position,int);
-void takeTestHelperAll(position, int*);
+int takeTestAll(position,int);
+int takeTestHelperAll(position, int*);
 int countnodes(position);
 
-int count=0;
+int count = 0;
+int status = 0;
 
 int main() {
     position root = NULL;
     int numQuestions;
-
+    position newNode = NULL;
     int choice = 0;
     printMenu();
     
@@ -51,7 +55,7 @@ int main() {
             printf("Upisi broj pitanja: ");
             scanf(" %d", &numQuestions);
             for (int i = 0; i < numQuestions; i++) {
-                position newNode = NULL;
+                newNode = NULL;
                 newNode = createNode(newNode);
                 if (newNode == NULL) {
                     printf("Greska u alociranju memorije!\n");
@@ -69,10 +73,18 @@ int main() {
             break;
         case 2:
             numQuestions=countnodes(root);
-            takeTestAll(root,numQuestions);
+            status = takeTestAll(root,numQuestions);
+            if(status != SUCCESS){
+                printf("\nGreska u izvodjenju programa!");
+                return ERROR;
+            }
             break;
         case 3:
-            saveQuestionsToFile(root);
+            status = saveQuestionsToFile(root);
+            if(status != SUCCESS){
+                printf("\nGreska u izvodjenju programa!");
+                return ERROR;
+            }
             break;
         case 4:
             root=loadQuestionsFromFile(root);
@@ -118,7 +130,8 @@ position insertNode(position root, position newNode) {
     return root;
 }
 
-void takeTest(position root, int numQuestions) {
+/*
+int takeTest(position root, int numQuestions) {
     char userAnswer[MAX_LEN];
     int score = 0;
 
@@ -141,29 +154,34 @@ void takeTest(position root, int numQuestions) {
 
     printf("\nGotovo. Ostvarili ste %d d %d pitanja\n", score, numQuestions);
     printf("Postotak: %.2f%%\n", (score / (float)numQuestions) * 100);
+    
+    return SUCCESS;
 }
+*/
 
 int checkAnswer(position root, char* userAnswer) {
     return strcmp(root->answer, userAnswer) == 0;
 }
 
-void takeTestAll(position root, int numQuestions) {
+int takeTestAll(position root, int numQuestions) {
     char userAnswer[MAX_LEN];
     int score = 0;
 
     printf("\nKviz krece!\n");
     if (root == NULL) {
         printf("Greska! Stablo je prazno!");
-        return;
+        return EMPTY;
     }
     takeTestHelperAll(root, &score);
     printf("\nTest je gotov, ostvarili ste %d od %d pitanja.\n", score, numQuestions);
     printf("Postotak: %.2f%%\n", (score / (float)numQuestions) * 100);
+    
+    return SUCCESS;
 }
 
-void takeTestHelperAll(position root, int* score) {
+int takeTestHelperAll(position root, int* score) {
     if (root == NULL) {
-        return;
+        return EMPTY;
     }
 
     char userAnswer[TEXT];
@@ -181,10 +199,12 @@ void takeTestHelperAll(position root, int* score) {
         printf("Krivo, tocan odgovor je: %s\n", root->answer);
     }
     takeTestHelperAll(root->right, score);
+    
+    return SUCCESS;
 }
 
 
-void saveQuestionsToFile(position root) {
+int saveQuestionsToFile(position root) {
 
     printf("\nUnesi ime datoteke za spremanje pitanja: ");
     char fileName[FILENAME_MAX];
@@ -193,23 +213,27 @@ void saveQuestionsToFile(position root) {
     FILE* fp = fopen(fileName, "w");
     if (fp == NULL) {
         printf("Greska pri otvaranju datoteke!\n");
-        return;
+        return FILE_FAIL;
     }
 
     saveQuestionsHelper(root, fp);
     fclose(fp);
     printf("Pitanja su spremljena u: %s\n", fileName);
+    
+    return SUCCESS;
 }
 
-void saveQuestionsHelper(position root, FILE* fp) {
+int saveQuestionsHelper(position root, FILE* fp) {
     if (root == NULL) {
-        return;
+        return EMPTY;
     }
 
     saveQuestionsHelper(root->left, fp);
     fprintf(fp, "%s\n", root->question);
     fprintf(fp, "%s\n", root->answer);
     saveQuestionsHelper(root->right, fp);
+    
+    return SUCCESS;
 }
 
 position loadQuestionsFromFile(position root) {
