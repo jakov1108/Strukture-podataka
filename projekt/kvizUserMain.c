@@ -20,7 +20,7 @@ int main() {
         {
             root=loadQuestionsFromFile(root);
 			if(countnodes(root)==0){
-                printf("\nNema unesenih pitanja, molimo ponovo odaberite datoteku s pitanjima!");
+                printf("\nNema unesenih pitanja, molimo ponovo odaberite predmet!");
                 break;
             }
             else if(countnodes(root)>0){
@@ -32,7 +32,7 @@ int main() {
         {
             numQuestions=countnodes(root);
             if(numQuestions==0){
-                printf("\nNema unesenih pitanja, molimo ponovo odaberite datoteku s pitanjima!");
+                printf("\nNema unesenih pitanja, molimo ponovo odaberite datoteku s pitanjima, odnosno predmet!");
                 break;
             }
             player_position newPlayer = NULL;
@@ -53,6 +53,12 @@ int main() {
         {
             saveLeaderboardToFile(leaderboard, countnodes(root));
             printf("\nHvala na koristenju, vidimo se dogodine!\n");
+            status = deleteAllPlayers(leaderboard);
+            if(status != 0){
+                printf("\nGreska u oslobadjanju memorije!");
+                return ALLOC_FAIL;
+            }
+            deleteTree(root);
             return SUCCESS;
         }
         default:
