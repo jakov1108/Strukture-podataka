@@ -103,8 +103,8 @@ int main(){
         }
         case 7:
         {
-            //TRIBA DODAT OSLOBADJANJE ALOCIRANE MEMORIJE
             printf("\nHvala na koristenju, ugodan dan!\n");
+            deleteTree(root);
             return SUCCESS;
         }
         default:
