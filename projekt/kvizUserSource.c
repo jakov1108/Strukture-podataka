@@ -61,6 +61,8 @@ int takeTestAll(position root, int numQuestions, char* name, double* time) {
     clock_t end = clock();
     *time = (double)(end - start) / CLOCKS_PER_SEC;
     printf("\nIgrac %s je odgovorio na %d pitanja od %d. Ukupno vrijeme: %lf sekundi\n", name, numCorrectAnswers, countnodes(root), *time);
+    free(questions);
+    free(visited);
     return numCorrectAnswers;
 }
 
@@ -74,7 +76,13 @@ void getQuestions(position current, position *questions, int *question_count) {
 }
 
 int checkAnswer(position current, char* userAnswer) {
-    if (strcmp(userAnswer, current->answer) == 0) {
+    char temp1[MAX_LEN] = {0};
+    char temp2[MAX_LEN] = {0};
+    strcpy(temp1,userAnswer);
+    strcpy(temp2,current->answer);
+    toLower(temp1);
+    toLower(temp2);
+    if (strcmp(temp1, temp2) == 0) {
         return 1;
     }
     return 0;
@@ -163,6 +171,20 @@ void saveLeaderboardToFile(player_position leaderboard, int numQuestions) {
     fclose(fp);
 }
 
+int deleteAllPlayers(player_position head) {
+    player_position current = head;
+    player_position next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    head = NULL;
+
+    return SUCCESS;
+}
+
 int countnodes(position root) {
     if (root == NULL) {
         return 0;
@@ -174,6 +196,22 @@ void printMenu() {
 	printf("\n1.) Odabir predmeta");
     printf("\n2.) Novo pokretanje kviza");
 	printf("\n3.) Izlaz");
+}
+
+void deleteTree(position root) {
+    if (root == NULL) {
+        return;
+    }
+    deleteTree(root->left);
+    deleteTree(root->right);
+    free(root);
+}
+
+void toLower(char* str) {
+    int len = strlen(str);
+    for (int i = 0; i < len; i++) {
+        str[i] = tolower(str[i]);
+    }
 }
 
 #endif
