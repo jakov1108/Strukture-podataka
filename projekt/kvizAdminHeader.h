@@ -46,8 +46,9 @@ void printMenu();
 int countnodes(position);
 int printQuestions(position);
 void printInstructions();
-void deleteNode(position, char*);
+position deleteQuestion(position, char*);
 position findMinNode(position);
+void deleteTree(position);
 
 int count = 0;
 int status = 0;
