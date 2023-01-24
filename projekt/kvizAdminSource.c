@@ -170,4 +170,13 @@ position findMinNode(position root) {
     return current;
 }
 
+void deleteTree(position root) {
+    if (root == NULL) {
+        return;
+    }
+    deleteTree(root->left);
+    deleteTree(root->right);
+    free(root);
+}
+
 #endif
