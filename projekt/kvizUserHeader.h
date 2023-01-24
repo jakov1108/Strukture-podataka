@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <time.h>
 
 #define SUCCESS (0)
 #define PROGRAM_EXIT (-1)
 #define ALLOC_FAIL_POZ (NULL)
+#define ALLOC_FAIL (-1)
 #define MAX_LEN (150)
 #define TEXT (100)
 #define EMPTY (0)
@@ -50,6 +52,9 @@ player_position createPlayer(player_position);
 player_position insertPlayer(player_position, player_position);
 void saveLeaderboardToFile(player_position, int);
 void getQuestions(position, position*, int*);
+int deleteAllPlayers(player_position);
+void deleteTree(position);
+void toLower(char*);
 
 int count = 0;
 int status = 0;
