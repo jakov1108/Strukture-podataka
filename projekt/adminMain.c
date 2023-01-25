@@ -1,5 +1,25 @@
-#include "kvizAdminHeader.h"
-#include "kvizAdminSource.c"
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define SUCCESS (0)
+#define PROGRAM_EXIT (-1)
+#define ALLOC_FAIL_POZ (NULL)
+#define MAX_LEN (150)
+#define TEXT (100)
+#define EXIT (0)
+#define EMPTY (0)
+#define ERROR (-1)
+#define FILE_FAIL (-1)
+
+int count = 0;
+int status = 0;
+
+#include "adminStructures.h"
+#include "adminFunctions.h"
+#include "adminSource.c"
 
 int main(){
 	
@@ -56,8 +76,20 @@ int main(){
                 printf("Upisi pitanje br. %d: ", i + 1);
                 scanf(" %[^\n]", newNode->question);
 
-                printf("Upisi tocan odgovor za br. %d: ", i + 1);
-                scanf(" %[^\n]", newNode->answer);
+                printf("Upisi opciju a): ", i + 1);
+                scanf(" %[^\n]", newNode->a);
+
+                printf("Upisi opciju b): ", i + 1);
+                scanf(" %[^\n]", newNode->b);
+
+                printf("Upisi opciju c): ", i + 1);
+                scanf(" %[^\n]", newNode->c);
+
+                printf("Upisi opciju d): ", i + 1);
+                scanf(" %[^\n]", newNode->d);
+
+                printf("Upisi slovo ispred tocnog odgovora za br. %d: ", i + 1);
+                scanf(" %c", &(newNode->answer));
 
                 root = insertNode(root, newNode);
             }
