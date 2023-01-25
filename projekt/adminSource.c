@@ -34,7 +34,7 @@ int saveQuestionsToFile(position root) {
 	printf("\nMolimo upisite ime predmeta pitanja: ");
 	scanf(" %[^\n]", buffer);
 	
-	strcat(buffer, ".txt");
+	strcat(buffer, ".que");
 	
     fp = fopen(buffer, "w");
     if (fp == NULL) {
@@ -52,7 +52,7 @@ int saveQuestionsHelper(position root, FILE* fp) {
         return SUCCESS;
     }
 
-    fprintf(fp, "%s\n%s\n", root->question, root->answer);
+    fprintf(fp, "%s\n%s\n%s\n%s\n%s\n%c\n", root->question, root->a, root->b, root->c, root->d, root->answer);
     saveQuestionsHelper(root->left, fp);
     saveQuestionsHelper(root->right, fp);
 
@@ -73,7 +73,7 @@ position loadQuestionsFromFile(position root) {
 	printf("\nMolimo upisite ime predmeta za ucitavanje pitanja: ");
 	scanf(" %[^\n]", buffer);
 	
-	strcat(buffer, ".txt");
+	strcat(buffer, ".que");
 
     fp = fopen(buffer, "r");
     if (fp == NULL) {
@@ -83,8 +83,12 @@ position loadQuestionsFromFile(position root) {
 
     position newNode = NULL;
     char question[MAX_LEN];
-    char answer[MAX_LEN];
-    while (fscanf(fp, " %[^\n] %[^\n]", question, answer) != EOF) {
+    char a[TEXT];
+    char b[TEXT];
+    char c[TEXT];
+    char d[TEXT];
+    char answer;
+    while (fscanf(fp, " %[^\n] %[^\n] %[^\n] %[^\n] %[^\n] %c", question, a, b, c, d, &answer) != EOF) {
         newNode = NULL;
         newNode = createNode(newNode);
         if (newNode == NULL) {
@@ -92,7 +96,11 @@ position loadQuestionsFromFile(position root) {
             return ALLOC_FAIL_POZ;
         }
         strcpy(newNode->question, question);
-        strcpy(newNode->answer, answer);
+        strcpy(newNode->a, a);
+        strcpy(newNode->b, b);
+        strcpy(newNode->c, c);
+        strcpy(newNode->d, d);
+        newNode->answer = answer;
         root = insertNode(root, newNode);
     }
     fclose(fp);
@@ -117,7 +125,11 @@ int printQuestions(position p) {
     printQuestions(p->left);
     printf("\n=========================");
     printf("\nPitanje: %s", p->question);
-    printf("\nOdgovor: %s", p->answer);
+    printf("\nOpcija a): %s", p->a);
+    printf("\nOpcija b): %s", p->b);
+    printf("\nOpcija c): %s", p->c);
+    printf("\nOpcija d): %s", p->d);
+    printf("\nOdgovor: %c", p->answer);
     printf("\n=========================");
     printQuestions(p->right);
 
@@ -154,7 +166,11 @@ position deleteQuestion(position root, char* question) {
         } else {
             position temp = findMinNode(root->right);
             strcpy(root->question, temp->question);
-            strcpy(root->answer, temp->answer);
+            strcpy(root->a, temp->a);
+            strcpy(root->b, temp->b);
+            strcpy(root->c, temp->c);
+            strcpy(root->d, temp->d);
+            root->answer = temp->answer;
             root->right = deleteQuestion(root->right, temp->question);
         }
     }
