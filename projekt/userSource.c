@@ -4,7 +4,7 @@
 position createNode(position p) {
     p = (position)malloc(sizeof(node));
     if (p == NULL) {
-        printf("Greska u alokaciji memorije!\n");
+        printf("\nGreska u alokaciji memorije!\n");
         return ALLOC_FAIL_POZ;
     }
     p->left = NULL;
@@ -29,7 +29,7 @@ position insertNode(position root, position newNode) {
 }
 
 int takeTestAll(position root, int numQuestions, char* name, double* time) {
-    char userAnswer[MAX_LEN];
+    char userAnswer;
     int numCorrectAnswers = 0;
     clock_t start = clock();
 
@@ -38,7 +38,11 @@ int takeTestAll(position root, int numQuestions, char* name, double* time) {
     int question_count = 0;
     position current = root;
     
-    getQuestions(current, questions, &question_count);
+    status = getQuestions(current, questions, &question_count);
+    if(status != 0){
+        printf("\nGreska u izvodjenju testa!");
+        return ALLOC_FAIL;
+    }
     int question_index;
     for (int i = 0; i < numQuestions; i++) {
         while (1) {
@@ -48,14 +52,19 @@ int takeTestAll(position root, int numQuestions, char* name, double* time) {
                 break;
             }
         }
-        printf("Pitanje: %s\n", questions[question_index]->question);
-        printf("Upisi odgovor: ");
-        scanf(" %[^\n]", userAnswer);
+        printf("\nPitanje: %s\n", questions[question_index]->question);
+        printf("a): %s\n", questions[question_index]->a);
+        printf("b): %s\n", questions[question_index]->b);
+        printf("c): %s\n", questions[question_index]->c);
+        printf("d): %s\n", questions[question_index]->d);
+        printf("Upisi slovo ispred tocnog odgovora: ");
+        scanf(" %c", &userAnswer);
         if (checkAnswer(questions[question_index], userAnswer)) {
             numCorrectAnswers++;
+            printf("Tocno!\n");
         }
         else {
-            printf("Pogresan odgovor, tocan odgovor je: %s.\n", questions[question_index]->answer);
+            printf("Pogresan odgovor, tocan odgovor je pod %c).\n", questions[question_index]->answer);
         }
     }
     clock_t end = clock();
@@ -66,23 +75,19 @@ int takeTestAll(position root, int numQuestions, char* name, double* time) {
     return numCorrectAnswers;
 }
 
-void getQuestions(position current, position *questions, int *question_count) {
+int getQuestions(position current, position *questions, int *question_count) {
     if (current == NULL) {
-        return;
+        return SUCCESS;
     }
     questions[(*question_count)++] = current;
     getQuestions(current->left, questions, question_count);
     getQuestions(current->right, questions, question_count);
+
+    return SUCCESS;
 }
 
-int checkAnswer(position current, char* userAnswer) {
-    char temp1[MAX_LEN] = {0};
-    char temp2[MAX_LEN] = {0};
-    strcpy(temp1,userAnswer);
-    strcpy(temp2,current->answer);
-    toLower(temp1);
-    toLower(temp2);
-    if (strcmp(temp1, temp2) == 0) {
+int checkAnswer(position current, char userAnswer) {
+    if (tolower(current->answer) == tolower(userAnswer)) {
         return 1;
     }
     return 0;
@@ -95,7 +100,7 @@ position loadQuestionsFromFile(position root) {
 	printf("\nMolimo upisite ime predmeta pitanja: ");
 	scanf(" %[^\n]", buffer);
 	
-	strcat(buffer, ".txt");
+	strcat(buffer, ".que");
 	
     fp = fopen(buffer, "r");
     if (fp == NULL) {
@@ -105,8 +110,12 @@ position loadQuestionsFromFile(position root) {
 
     position newNode = NULL;
     char question[MAX_LEN];
-    char answer[MAX_LEN];
-    while (fscanf(fp, " %[^\n] %[^\n]", question, answer) != EOF) {
+    char a[TEXT];
+    char b[TEXT];
+    char c[TEXT];
+    char d[TEXT];
+    char answer;
+    while (fscanf(fp, " %[^\n] %[^\n] %[^\n] %[^\n] %[^\n] %c", question, a, b, c, d, &answer) != EOF) {
         newNode = NULL;
         newNode = createNode(newNode);
         if (newNode == NULL) {
@@ -114,7 +123,11 @@ position loadQuestionsFromFile(position root) {
             return ALLOC_FAIL_POZ;
         }
         strcpy(newNode->question, question);
-        strcpy(newNode->answer, answer);
+        strcpy(newNode->a,a);
+        strcpy(newNode->b,b);
+        strcpy(newNode->c,c);
+        strcpy(newNode->d,d);
+        newNode->answer = answer;
         root = insertNode(root, newNode);
     }
     fclose(fp);
@@ -145,7 +158,7 @@ player_position insertPlayer(player_position leaderboard, player_position newPla
     return leaderboard;
 }
 
-void saveLeaderboardToFile(player_position leaderboard, int numQuestions) {
+int saveLeaderboardToFile(player_position leaderboard, int numQuestions) {
     char buffer[TEXT]={0};
     printf("\nUpisite ime datoteke za spremanje rezultata: ");
     scanf(" %[^\n]", buffer);
@@ -154,7 +167,7 @@ void saveLeaderboardToFile(player_position leaderboard, int numQuestions) {
     FILE* fp = fopen(buffer, "w");
     if (fp == NULL) {
         printf("Greska u otvaranju datoteke!\n");
-        return;
+        return FILE_FAIL;
     }
 
     fprintf(fp, "Ime,Vrijeme,Broj tocnih odgovora,Broj pitanja,Prosjecno vrijeme odgovora,Postotak,Bodovi\n");
@@ -169,6 +182,8 @@ void saveLeaderboardToFile(player_position leaderboard, int numQuestions) {
     }
 
     fclose(fp);
+
+    return SUCCESS;
 }
 
 int deleteAllPlayers(player_position head) {
@@ -205,13 +220,6 @@ void deleteTree(position root) {
     deleteTree(root->left);
     deleteTree(root->right);
     free(root);
-}
-
-void toLower(char* str) {
-    int len = strlen(str);
-    for (int i = 0; i < len; i++) {
-        str[i] = tolower(str[i]);
-    }
 }
 
 #endif
