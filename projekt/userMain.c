@@ -1,5 +1,26 @@
-#include "kvizUserHeader.h"
-#include "kvizUserSource.c"
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <time.h>
+
+#define SUCCESS (0)
+#define PROGRAM_EXIT (-1)
+#define ALLOC_FAIL_POZ (NULL)
+#define ALLOC_FAIL (-1)
+#define MAX_LEN (150)
+#define TEXT (100)
+#define EMPTY (0)
+#define ERROR (-1)
+#define FILE_FAIL (-1)
+
+int count = 0;
+int status = 0;
+
+#include "userStructures.h"
+#include "userFunctions.h"
+#include "userSource.c"
 
 int main() {
     position root = NULL;
@@ -35,30 +56,44 @@ int main() {
                 printf("\nNema unesenih pitanja, molimo ponovo odaberite datoteku s pitanjima, odnosno predmet!");
                 break;
             }
+
             player_position newPlayer = NULL;
             newPlayer = createPlayer(newPlayer);
             if (newPlayer == NULL) {
-                printf("Greska u alociranju memorije!\n");
+                printf("\nGreska u alociranju memorije!\n");
                 return ERROR;
             }
-            printf("Upisi svoje ime: ");
+
+            printf("\nUpisi svoje ime: ");
             scanf(" %[^\n]", newPlayer->name);
+
             numCorrectAnswers = takeTestAll(root, numQuestions, newPlayer->name, &newPlayer->time);
             newPlayer->numCorrectAnswers = numCorrectAnswers;
             newPlayer->averageAnswer = newPlayer->time / numQuestions;
             leaderboard = insertPlayer(leaderboard, newPlayer);
+
             break;
         }
         case 3:
         {
-            saveLeaderboardToFile(leaderboard, countnodes(root));
+            if(leaderboard != NULL){ 
+                status = saveLeaderboardToFile(leaderboard, countnodes(root));
+            }
+            if(status != 0){
+                printf("\nGreska u spremanju tablice rezultata!");
+                return ALLOC_FAIL;
+            }
+
             printf("\nHvala na koristenju, vidimo se dogodine!\n");
+
             status = deleteAllPlayers(leaderboard);
             if(status != 0){
                 printf("\nGreska u oslobadjanju memorije!");
                 return ALLOC_FAIL;
             }
+
             deleteTree(root);
+
             return SUCCESS;
         }
         default:
