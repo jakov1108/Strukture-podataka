@@ -14,5 +14,7 @@ int saveLeaderboardToFile(player_position, int, char*);
 int getQuestions(position, position*, int*);
 int deleteAllPlayers(player_position);
 void deleteTree(position);
+int printFastest(player_position);
+int printBest(player_position);
 
 #endif
