@@ -92,6 +92,38 @@ int checkAnswer(position current, char userAnswer) {
     return 0;
 }
 
+int printBest(player_position p){
+    
+    player_position top = p;
+
+    while(p != NULL){
+        if(p->points > top->points){
+            top = p;
+        }
+        p = p->next;
+    }
+
+    printf("\nNajbolji rezultat ostvario je %s sa postignutih %lf bodova!", top->name, top->points);
+
+    return SUCCESS;
+}
+
+int printFastest(player_position p){
+    
+    player_position min = p;
+
+    while(p != NULL){
+        if(p->time < min->time){
+            min = p;
+        }
+        p = p->next;
+    }
+
+    printf("\nKviz je najbrze rjesio %s u %.2lf sekundi.", min->name, min->time);
+
+    return SUCCESS;
+}
+
 position loadQuestionsFromFile(position root, char fileName[FILENAME_MAX]) {
     FILE* fp = NULL;
 	char buffer[FILENAME_MAX];
