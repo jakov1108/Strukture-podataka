@@ -130,7 +130,14 @@ int main(){
         }
         case 6:
         {
+            if(countnodes(root) != 0){
+                printf("\nVec su ucitana pitanja!");
+                break;
+            }
             root=loadQuestionsFromFile(root);
+            if(countnodes(root) != 0){
+                printf("\nPitanja uspjesno ucitana!");
+            }
             break;
         }
         case 7:
