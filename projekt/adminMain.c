@@ -144,6 +144,8 @@ int main(){
         {
             printf("\nHvala na koristenju, ugodan dan!\n");
             deleteTree(root);
+
+            system("pause");
             return SUCCESS;
         }
         default:
