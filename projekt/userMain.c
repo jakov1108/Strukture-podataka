@@ -87,6 +87,22 @@ int main() {
                 return ALLOC_FAIL;
             }
 
+            if(leaderboard != NULL){
+                status = printBest(leaderboard);
+                if(status != 0){
+                    printf("\nGreska!");
+                    return ERROR;
+                }
+            }
+
+            if(leaderboard != NULL){
+                status = printFastest(leaderboard);
+                if(status != 0){
+                    printf("\nGreska!");
+                    return ERROR;
+                }
+            }
+
             printf("\nHvala na koristenju, vidimo se!\n");
 
             status = deleteAllPlayers(leaderboard);
@@ -97,6 +113,8 @@ int main() {
 
             deleteTree(root);
 
+            system("pause");
+
             return SUCCESS;
         }
         default:
@@ -106,5 +124,6 @@ int main() {
         }
         }
     }
+
     return SUCCESS;
 }
