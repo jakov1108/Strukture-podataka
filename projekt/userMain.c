@@ -29,6 +29,7 @@ int main() {
     position newNode = NULL;
     int choice = 0;
     int numCorrectAnswers = 0;
+    char fileName[FILENAME_MAX] = {0};
 
     while (1)
     {
@@ -39,7 +40,9 @@ int main() {
         switch (choice) {
         case 1:
         {
-            root=loadQuestionsFromFile(root);
+            printf("\nUnesite ime datoteke za ucitavanje pitanja: ");
+            scanf(" %[^\n]", fileName);
+            root=loadQuestionsFromFile(root,fileName);
 			if(countnodes(root)==0){
                 printf("\nNema unesenih pitanja, molimo ponovo odaberite predmet!");
                 break;
@@ -77,14 +80,14 @@ int main() {
         case 3:
         {
             if(leaderboard != NULL){ 
-                status = saveLeaderboardToFile(leaderboard, countnodes(root));
+                status = saveLeaderboardToFile(leaderboard, countnodes(root), fileName);
             }
             if(status != 0){
                 printf("\nGreska u spremanju tablice rezultata!");
                 return ALLOC_FAIL;
             }
 
-            printf("\nHvala na koristenju, vidimo se dogodine!\n");
+            printf("\nHvala na koristenju, vidimo se!\n");
 
             status = deleteAllPlayers(leaderboard);
             if(status != 0){
