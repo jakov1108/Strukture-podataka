@@ -12,7 +12,6 @@ position createNode(position p) {
     return p;
 }
 
-
 position insertNode(position root, position newNode) {
     if (root == NULL) {
         return newNode;
@@ -93,12 +92,11 @@ int checkAnswer(position current, char userAnswer) {
     return 0;
 }
 
-position loadQuestionsFromFile(position root) {
+position loadQuestionsFromFile(position root, char fileName[FILENAME_MAX]) {
     FILE* fp = NULL;
 	char buffer[FILENAME_MAX];
-	
-	printf("\nMolimo upisite ime predmeta pitanja: ");
-	scanf(" %[^\n]", buffer);
+
+    strcat(buffer, fileName);
 	
 	strcat(buffer, ".que");
 	
@@ -158,27 +156,29 @@ player_position insertPlayer(player_position leaderboard, player_position newPla
     return leaderboard;
 }
 
-int saveLeaderboardToFile(player_position leaderboard, int numQuestions) {
+int saveLeaderboardToFile(player_position leaderboard, int numQuestions, char fileName[FILENAME_MAX]) {
     char buffer[TEXT]={0};
-    printf("\nUpisite ime datoteke za spremanje rezultata: ");
-    scanf(" %[^\n]", buffer);
+    FILE* fp = NULL;
+    strcat(buffer,fileName);
+    strcat(buffer," rezultati");
     strcat(buffer,".csv");
-    
-    FILE* fp = fopen(buffer, "w");
-    if (fp == NULL) {
-        printf("Greska u otvaranju datoteke!\n");
-        return FILE_FAIL;
-    }
 
-    fprintf(fp, "Ime,Vrijeme,Broj tocnih odgovora,Broj pitanja,Prosjecno vrijeme odgovora,Postotak,Bodovi\n");
+    fp = fopen(buffer, "a+");
+    fseek(fp, 0, SEEK_END);
+    if (fp != NULL) {
+        player_position current = leaderboard;
+        
+        if (ftell(fp)==0){
+            fprintf(fp, "Ime,Vrijeme,Broj tocnih odgovora,Broj pitanja,Prosjecno vrijeme odgovora,Postotak,Bodovi\n");
+        }
 
-    player_position current = leaderboard;
-    while (current != NULL) {
-        current->percentage=(double)current->numCorrectAnswers*100/numQuestions;
-        current->points=(double)current->percentage * (10*numQuestions / current->time);
-        fprintf(fp, "%s,%.2lfs,%d,%d,%.2lfs,%.2lf%,%.2lf\n"
-                    , current->name, current->time, current->numCorrectAnswers, numQuestions, current->averageAnswer, current->percentage,current->points);
-        current = current->next;
+        while (current != NULL) {
+            current->percentage=(double)current->numCorrectAnswers*100/numQuestions;
+            current->points=(double)(current->percentage / 100) * (numQuestions / (current->time / 60)) * 10;
+            fprintf(fp, "%s,%.2lfs,%d,%d,%.2lfs,%.2lf%,%.2lf\n"
+                        , current->name, current->time, current->numCorrectAnswers, numQuestions, current->averageAnswer, current->percentage,current->points);
+            current = current->next;
+        }
     }
 
     fclose(fp);
